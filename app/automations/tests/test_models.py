@@ -5,7 +5,7 @@ class ModelTests(TestCase):
     Includes tests for all models in automations app . 
     """
 
-    def market_data_fields_are_double_test(self):
+    def test_market_data_fields_are_double(self):
         """
         -   Total_Market_Capitalization_USD : Double
         -   BTC_Dominance_Percentage : Double
@@ -40,7 +40,7 @@ class ModelTests(TestCase):
             changeInAltsMarketCapPer=changeInAltsMarketCapPer,
             changeInAltsMarketCapUSD=changeInAltsMarketCapUSD)
         
-        self.assertEquals(totalAltsMarketCapUSD,marketSnapshot.totalBitcoinMarketCapUSD)
+        self.assertEquals(totalMarketCapUSD,marketSnapshot.totalMarketCapUSD)
 
 
 

@@ -1,17 +1,36 @@
 version: "3"
 
-services: 
+services:
+    nginx:
+        image: nginx:latest
+        container_name: ng01
+        ports : 
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./app:/app
+            - ./nginx:/etc/nginx/conf.d
+            - ./certs:/etc/nginx/certs
+        
+        networks:
+            - djangonetwork
+        depends_on: 
+            -   app
     app:
         build:
             context: .
-        ports: 
-            - "8000:8000"
+        container_name: dg01
         volumes:
             - ./app:/app
+        networks:
+            - djangonetwork
         command: >
             sh -c "python manage.py wait_for_db &&
+                    python manage.py makemigrations &&
                    python manage.py migrate &&
-                   python manage.py  runserver 0.0.0.0:8000"
+                   gunicorn app.wsgi -b 0.0.0.0:8000"
+        expose: 
+            -   "8000"
         environment: 
             - DB_HOST=db
             - DB_NAME=app
@@ -23,9 +42,55 @@ services:
 
     db:
         image: postgres:10-alpine
+        networks:
+            - djangonetwork
         environment: 
             -   POSTGRES_DB=app
             -   POSTGRES_USER=postgres
             -   POSTGRES_PASSWORD=moonshot
+        container_name: ps01
+        hostname: db
+    redis:
+        image: redis:alpine
+        container_name: rz01
+        ports:
+            - "6379:6379"
+        networks:
+          - djangonetwork
+    
+    celery_worker:
+        build: 
+            context: .
+        command: sh -c "celery -A app worker -l info"
+        container_name: celery_worker
+        depends_on:
+            - app
+            - redis
+            - db
+        deploy:
+            replicas: 2
+            restart_policy:
+                condition: on-failure
+            resources:
+                limits:
+                    cpus: '0.50'
+                    memory: 50M
+                reservations:
+                    cpus: '0.25'
+                    memory: 20M
+        networks: 
+            - djangonetwork
+    celery_beat:
+        build: 
+            context: .
+        command: sh -c "python sleep.py && celery -A app beat -l info -S django"
+        networks: 
+            - djangonetwork
+        depends_on:
+            - app
+            - redis
+            - db
 
-            
+networks:
+    djangonetwork:
+        driver: bridge

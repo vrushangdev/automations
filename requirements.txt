@@ -1,5 +1,12 @@
+requests
+tweepy
 django
 djangorestframework
 flake8
 # psycopg2>=2.7.5,<2.8.0
 psycopg2-binary
+gunicorn
+django-celery-beat
+django-celery-results
+redis
+celery[redis]

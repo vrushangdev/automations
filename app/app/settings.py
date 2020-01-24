@@ -37,11 +37,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_beat',
+    'django_celery_results',
     'rest_framework',
     'rest_framework.authtoken',
     'core',
     'user',
     'automations',
+
 ]
 
 MIDDLEWARE = [
@@ -128,5 +131,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
+STATIC_ROOT = '/app/static/'
 AUTH_USER_MODEL = 'core.USER'
+
+CELERY_BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_IMPORTS = ('automations.tasks',)
