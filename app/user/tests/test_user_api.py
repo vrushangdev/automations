@@ -30,7 +30,7 @@ class PublicUserApiTests(TestCase):
         }
         # Send Payload
         res = self.client.post(CREATE_USER_URL, payload)
-        # Assert & Test Weather We Were Successful or not
+        # Assert & Test Wether We Were Successful or not
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
 
         # Now lets see it this went into the database

@@ -1,6 +1,6 @@
 #   User End Points
 
-### Available Actions
+### Available Actions For Mobile Clients
 
 -   Create User
     - url : /api/user/create
