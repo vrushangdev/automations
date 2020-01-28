@@ -1,4 +1,5 @@
 from django.contrib import admin
-from .models import CryptoMarketReport
+from .models import ORMMarketSnapShot,ORMMarketChange
 # Register your models here.
-admin.site.register(CryptoMarketReport)
+admin.site.register(ORMMarketSnapShot)
+# admin.site.register(ORMMarketChange)

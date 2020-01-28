@@ -67,23 +67,13 @@ services:
             - app
             - redis
             - db
-        deploy:
-            replicas: 2
-            restart_policy:
-                condition: on-failure
-            resources:
-                limits:
-                    cpus: '0.50'
-                    memory: 50M
-                reservations:
-                    cpus: '0.25'
-                    memory: 20M
+       
         networks: 
             - djangonetwork
     celery_beat:
         build: 
             context: .
-        command: sh -c "python sleep.py && celery -A app beat -l info -S django"
+        command: sh -c "celery -A app beat -l info -S django"
         networks: 
             - djangonetwork
         depends_on:
